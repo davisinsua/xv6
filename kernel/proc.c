@@ -303,16 +303,15 @@ int saveInfo(struct pstat* LaTable)  //create a pointer able to point to object 
 		else{
 			LaTable->inuse[i] = 1; 
 		}
-		LaTable->pid[i] = p-> //with the pid of the process p->
-		LaTable->tickets[i] = p-> //with the number of ti
-		//LaTable->ticks[i] = p-> //with the number of time the process has runned in the cpu
+		LaTable->pid[i] = p->pid; //with the pid of the process p->
+		LaTable->tickets[i] = p->numTickets; //with the number of ti
+		//LaTable->ticks[i] = p->numTicks; //with the number of time the process has runned in the cpu
 		i++;
 	}
 	release(&ptable.lock);
 	return 0;	
 }
-Enter scheduler.  Must hold only ptable.lock
- nd have changed proc->state.
+//Enter scheduler.  Must hold only ptable.lock and have changed proc->state.
 void
 sched(void)
 {
