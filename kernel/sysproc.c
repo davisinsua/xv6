@@ -10,11 +10,17 @@
 int
 sys_getpinfo(void)
 {
+
 	struct pstat *pTable; //pointer to the table
-
-	unsigned int number = (unsigned int)&pTable;
-
-	return number;
+	if(argptr(0, (void *)&pTable, sizeof(*pTable)) < 0){
+		return -1;  //input validation
+	}
+	if(pTable == NULL){
+		return -1; //null check
+	}
+	//unsigned int number = (unsigned int)&pTable;
+	getpinfo(pTable); //call the getpinfo() in proc.c
+	return 0;
 }
 
 int
