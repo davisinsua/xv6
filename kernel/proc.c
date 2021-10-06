@@ -5,6 +5,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "pstat.h"
 
 struct {
   struct spinlock lock;
@@ -45,6 +46,8 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->numTicks = 10;
+  p->numTickets = 0;
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
