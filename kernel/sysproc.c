@@ -5,6 +5,17 @@
 #include "mmu.h"
 #include "proc.h"
 #include "sysfunc.h"
+#include "pstat.h"
+
+int
+sys_getpinfo(void)
+{
+	struct pstat *pTable; //pointer to the table
+
+	unsigned int number = (unsigned int)&pTable;
+
+	return number;
+}
 
 int
 sys_fork(void)
