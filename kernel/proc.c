@@ -304,8 +304,8 @@ int getpinfo(struct pstat* LaTable)  //create a pointer able to point to object 
 			LaTable->inuse[i] = 1; 
 		}
 		LaTable->pid[i] = p->pid; //with the pid of the process p->
-		LaTable->tickets[i] = p->numTickets; //with the number of ti
-		//LaTable->ticks[i] = p->numTicks; //with the number of time the process has runned in the cpu
+		LaTable->tickets[i] = p->numTickets; //with the number of ticks
+		LaTable->ticks[i] = p->numTicks; //with the number of time the process has runned in the cpu
 		i++;
 	}
 	release(&ptable.lock);
