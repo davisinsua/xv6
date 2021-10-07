@@ -16,6 +16,7 @@ USER_PROGS := \
 	tester\
 	usertests\
 	readingpstat\
+	tickettest\
 	wc\
 	zombie
 
