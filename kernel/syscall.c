@@ -103,6 +103,7 @@ static int (*syscalls[])(void) = {
 [SYS_wait]    sys_wait,
 [SYS_write]   sys_write,
 [SYS_uptime]  sys_uptime,
+[SYS_getpinfo] sys_getpinfo,
 };
 
 // Called on a syscall trap. Checks that the syscall number (passed via eax)
@@ -114,7 +115,7 @@ syscall(void)
   
   num = proc->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num] != NULL) {
-    proc->tf->eax = syscalls[num]();
+    roc->tf->eax = syscalls[num]();
   } else {
     cprintf("%d %s: unknown sys call %d\n",
             proc->pid, proc->name, num);
