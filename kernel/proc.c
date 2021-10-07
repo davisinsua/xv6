@@ -288,7 +288,7 @@ scheduler(void)
   }
 }
 
-int saveInfo(struct pstat* LaTable)  //create a pointer able to point to object of the tpe pstat
+int getpinfo(struct pstat* LaTable)  //create a pointer able to point to object of the tpe pstat
 {
 	struct proc *p;   //Create a pointer able to point to objects of the type proc (process) 
 	int i = 0; // used to iterate througt the slots of the arrays in pstat
