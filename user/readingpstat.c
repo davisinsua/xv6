@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	getpinfo(&LaTable);
 	for(i = 0; i < 25; i++)
 	{
-		printf(1, "Use: %d   Tickets: %d   Ticks: %d\n", LaTable.inuse[i], LaTable.tickets[i], LaTable.ticks[i]);
+		printf(1, "Use: %d   Tickets: %d   PID: %d   Ticks: %d\n", LaTable.inuse[i], LaTable.tickets[i], LaTable.pid[i], LaTable.ticks[i]);
 	}
 	exit();
 }
