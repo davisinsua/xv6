@@ -306,15 +306,16 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
-
+      
+      
       //checks if the current process is a loser
       if(p->state==RUNNABLE && counter < winner){
-      	counter += p->numTickets; //increment the counter by the current process tickets
+      counter += p->numTickets; //increment the counter by the current process tickets
 	continue;
       }
 
       //checks if the current process is a winner
-      if(p->state==RUNNABLE && counter > winner){
+      if(p->state==RUNNABLE && counter >= winner){
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
@@ -331,8 +332,7 @@ scheduler(void)
       }
     }
     release(&ptable.lock);
-
-  }
+   }
 }
 
 int settickets(int passTickets)
