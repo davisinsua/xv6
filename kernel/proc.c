@@ -156,6 +156,10 @@ fork(void)
       np->ofile[i] = filedup(proc->ofile[i]);
   np->cwd = idup(proc->cwd);
  
+//set childs tickets to parents tickets
+  np->numTickets = proc->numTickets;
+
+
   pid = np->pid;
   np->state = RUNNABLE;
   safestrcpy(np->name, proc->name, sizeof(proc->name));
@@ -286,6 +290,17 @@ scheduler(void)
     release(&ptable.lock);
 
   }
+}
+
+int settickets(int passTickets)
+{
+	if(passTickets < 1)
+	{
+		return -1;
+	}
+
+	proc->numTickets = passTickets;
+	return 0;
 }
 
 int getpinfo(struct pstat* LaTable)  //create a pointer able to point to object of the tpe pstat
