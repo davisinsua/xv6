@@ -7,6 +7,20 @@
 #include "sysfunc.h"
 #include "pstat.h"
 
+//prototype of settickets
+int
+sys_settickets(void)
+{
+	int mytickets;
+	if (argint(0, &mytickets) < 0)
+	{
+		return -1;
+	}
+	else{
+		return settickets(mytickets); //in proc.c
+	}
+
+//prototype of getpinfo
 int
 sys_getpinfo(void)
 {
