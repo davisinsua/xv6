@@ -309,13 +309,13 @@ scheduler(void)
       
       
       //checks if the current process is a loser
-      if(p->state==RUNNABLE && counter < winner){
+      if(p->state==RUNNABLE && counter <= winner){
       counter += p->numTickets; //increment the counter by the current process tickets
 	continue;
       }
 
       //checks if the current process is a winner
-      if(p->state==RUNNABLE && counter >= winner){
+      if(p->state==RUNNABLE && counter > winner){
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
@@ -324,7 +324,6 @@ scheduler(void)
       p->state = RUNNING;
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
-
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       proc = 0;
