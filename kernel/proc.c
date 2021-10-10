@@ -7,6 +7,24 @@
 #include "spinlock.h"
 #include "pstat.h"
 
+
+#define SCHRAND_MAX ((1U << 31) - 1)
+#define SCHRAND_MULT 214013
+#define SCHRAND_CONST 2531011
+
+//Pseudo-random number generator made from a linear congruential generator.
+//Based on code and constants found at:
+//https://rosettacode.org/wiki/Linear_congruential_generator
+
+int rseed = 707606505;
+
+int rand(void)
+{
+  return rseed = (rseed * SCHRAND_MULT + SCHRAND_CONST) % SCHRAND_MAX;
+}
+
+
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -263,10 +281,25 @@ void
 scheduler(void)
 {
   struct proc *p;
-
+  int totaltickets;
+  int counter=0;
+  int winner=0;
   for(;;){
     // Enable interrupts on this processor.
     sti();
+    
+    //get ticket total
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+	    if(p->state == RUNNABLE) {
+    		totaltickets = totaltickets + p->numTickets;
+  	}
+    }
+
+    //run the lottery
+    if(totaltickets > 0)
+  	{
+		winner = rand() % totaltickets + 1; //random num between 1 to total number of tickets
+	}
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -274,6 +307,14 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
+      //checks if the current process is a loser
+      if(p->state==RUNNABLE && counter < winner){
+      	counter += p->numTickets; //increment the counter by the current process tickets
+	continue;
+      }
+
+      //checks if the current process is a winner
+      if(p->state==RUNNABLE && counter > winner){
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
@@ -286,6 +327,8 @@ scheduler(void)
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       proc = 0;
+      break;
+      }
     }
     release(&ptable.lock);
 
