@@ -111,7 +111,7 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 //miniproject2
-void		settickets(int);
+int		settickets(int);
 int		getpinfo(struct pstat*);
 
 // swtch.S
