@@ -19,7 +19,7 @@ sys_settickets(void)
 	else{
 		return settickets(mytickets); //in proc.c
 	}
-
+}
 //prototype of getpinfo
 int
 sys_getpinfo(void)
