@@ -277,12 +277,13 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+
 void
 scheduler(void)
 {
   struct proc *p;
-  int totaltickets;
-  int counter=0;
+  int totaltickets=0;
+  int counter=0; 
   int winner=0;
   for(;;){
     // Enable interrupts on this processor.
@@ -298,37 +299,48 @@ scheduler(void)
     //run the lottery
     if(totaltickets > 0)
   	{
-		winner = rand() % totaltickets + 1; //random num between 1 to total number of tickets
+
+	winner = rand() % totaltickets + 1; //random num between 1 to total number of tickets
+	cprintf("%d",winner);	
 	}
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
+    	counter += p->numTickets; //increment the counter by the current process tickets 
+      if(p->state != RUNNABLE){
+    	
         continue;
-      
+	}      
       
       //checks if the current process is a loser
-      if(p->state==RUNNABLE && counter <= winner){
-      counter += p->numTickets; //increment the counter by the current process tickets
+      if(counter < winner){
+     
 	continue;
       }
 
       //checks if the current process is a winner
-      if(p->state==RUNNABLE && counter > winner){
+
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
+     
+      const int tickstart = ticks;
+     
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
+
+      p->numTicks += ticks - tickstart;
+      
+     // totaltickets = 0;
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       proc = 0;
       break;
-      }
+      
     }
     release(&ptable.lock);
    }
