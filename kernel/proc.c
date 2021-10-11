@@ -301,7 +301,7 @@ scheduler(void)
   	{
 
 	winner = rand() % totaltickets + 1; //random num between 1 to total number of tickets
-	cprintf("%d",winner);	
+		
 	}
 
     // Loop over process table looking for process to run.
