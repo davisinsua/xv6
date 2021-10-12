@@ -11,6 +11,8 @@ int main(int argc, char *argv[])
 	getpinfo(&LaTable);
 	for(i = 0; i < 25; i++)
 	{
+		if (LaTable.inuse[i]==0)
+      			continue;
 		printf(1, "Use: %d   Tickets: %d   PID: %d   Ticks: %d\n", LaTable.inuse[i], LaTable.tickets[i], LaTable.pid[i], LaTable.ticks[i]);
 	}
 	exit();
