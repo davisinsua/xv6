@@ -65,7 +65,7 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   p->numTicks = 0;
-  p->numTickets = 10;
+  p->numTickets = 1;
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -277,70 +277,60 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
-
 void
 scheduler(void)
 {
   struct proc *p;
-  int totaltickets=0;
-  int counter=0; 
-  int winner=0;
   for(;;){
+	int winner=0;
+	int counter=0;
+	int totaltickets=0;
     // Enable interrupts on this processor.
     sti();
-    
+	winner++;
+	counter++;
+    acquire(&ptable.lock);
     //get ticket total
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 	    if(p->state == RUNNABLE) {
-    		totaltickets = totaltickets + p->numTickets;
+    		totaltickets += p->numTickets;
   	}
     }
 
     //run the lottery
     if(totaltickets > 0)
   	{
-
-	winner = rand() % totaltickets + 1; //random num between 1 to total number of tickets
-		
+		winner = rand() % totaltickets + 1; //random num between 1 to total number of tickets
 	}
 
     // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
+	
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    	counter += p->numTickets; //increment the counter by the current process tickets 
-      if(p->state != RUNNABLE){
-    	
+      if(p->state != RUNNABLE)
         continue;
-	}      
       
       //checks if the current process is a loser
-      if(counter < winner){
-     
-	continue;
+      if(p->state==RUNNABLE && counter < winner){
+      counter += p->numTickets; //increment the counter by the current process tickets
+	  continue;
       }
 
       //checks if the current process is a winner
-
+      if(p->state==RUNNABLE && counter >= winner){
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
-     
-      const int tickstart = ticks;
-     
+	  p->numTicks=p->numTicks + 1;
       swtch(&cpu->scheduler, proc->context);
       switchkvm();
-
-      p->numTicks += ticks - tickstart;
-      
-     // totaltickets = 0;
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       proc = 0;
       break;
-      
+      }
     }
     release(&ptable.lock);
    }
@@ -536,5 +526,3 @@ procdump(void)
     cprintf("\n");
   }
 }
-
-
